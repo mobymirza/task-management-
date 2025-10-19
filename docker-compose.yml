@@ -1,0 +1,53 @@
+version: 3.9;
+
+services:
+    db:
+        image: mariadb:latest
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: task-management
+            MYSQL_USER: app
+            MYSQL_PASSWORD: password
+        volumes:
+            - ./db:/var/lib/mysql
+
+    test_db:
+        image: mariadb:latest
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: task-management-test
+            MYSQL_USER: app
+            MYSQL_PASSWORD: password
+
+    phpmyadmin:
+        image: phpmyadmin
+        depends_on:
+            -   db
+        ports:
+            - 8080:80
+        environment:
+            - PMA_ARBITRARY=1
+
+    php:
+        build:
+            context: .
+            dockerfile: Docker/php/Dockerfile
+        depends_on:
+            -   db
+        volumes:
+            - .:/var/www/html
+
+    web:
+        build:
+            context: .
+            dockerfile: Docker/web/Dockerfile
+        ports:
+            - "2020:80"
+        depends_on:
+            - php
+        volumes:
+            - .:/var/www/html
+
+
+
+
