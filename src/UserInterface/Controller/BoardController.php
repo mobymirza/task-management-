@@ -12,7 +12,7 @@ use Symfony\Component\Routing\Attribute\Route;
 final class BoardController extends AbstractController
 {
     #[Route('/create-board', name: 'board')]
-    public function index(Request $request,CommandBus $commandBus): JsonResponse
+    public function index(Request $request,CommandBus $commandBus) : JsonResponse
     {
        $command = new CreateBoardCommand(
           $request->getPayload()->get('name'),
