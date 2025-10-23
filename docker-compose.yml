@@ -1,7 +1,7 @@
 version: 3.9;
 
 services:
-    db:
+    database:
         image: mariadb:latest
         environment:
             MYSQL_ROOT_PASSWORD: root
@@ -22,7 +22,7 @@ services:
     phpmyadmin:
         image: phpmyadmin
         depends_on:
-            -   db
+            -   database
         ports:
             - 8080:80
         environment:
@@ -32,8 +32,10 @@ services:
         build:
             context: .
             dockerfile: Docker/php/Dockerfile
+        environment:
+                - DEFAULT_URI=http://localhost
         depends_on:
-            -   db
+            -   database
         volumes:
             - .:/var/www/html
 
@@ -47,7 +49,4 @@ services:
             - php
         volumes:
             - .:/var/www/html
-
-
-
 
