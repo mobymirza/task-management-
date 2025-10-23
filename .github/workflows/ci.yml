@@ -19,18 +19,32 @@ jobs:
       - name: Install dependencies
         run: composer install --no-interaction --no-progress --prefer-dist
 
-      - name: Run Unit test
+      # دیباگ: مسیر فعلی و وجود فولدر تست‌ها را چاپ کن
+      - name: Debug paths
         run: |
-          if [ -f bin/phpunit ]; then
-            php bin/phpunit --testdox tests/Unit/
+          pwd
+          ls -la
+          echo "--- tests tree ---"
+          ls -la tests || true
+          find tests -maxdepth 2 -type f -name "*Test.php" || true
+
+      # اگر کانفیگ هست با همون اجرا کن؛ وگرنه از مسیرها استفاده کن
+      - name: Run Unit tests
+        run: |
+          if [ -f phpunit.xml ] || [ -f phpunit.xml.dist ]; then
+            if [ -f bin/phpunit ]; then php bin/phpunit --testsuite Unit --testdox;
+            else vendor/bin/phpunit --testsuite Unit --testdox; fi
           else
-            vendor/bin/phpunit --testdox tests/Unit/
+            if [ -f bin/phpunit ]; then php bin/phpunit --testdox tests/Unit/;
+            else vendor/bin/phpunit --testdox tests/Unit/; fi
           fi
 
       - name: Run End-To-End tests
         run: |
-          if [ -f bin/phpunit ]; then
-            php bin/phpunit --testdox tests/EndToEnd/
+          if [ -f phpunit.xml ] || [ -f phpunit.xml.dist ]; then
+            if [ -f bin/phpunit ]; then php bin/phpunit --testsuite EndToEnd --testdox;
+            else vendor/bin/phpunit --testsuite EndToEnd --testdox; fi
           else
-            vendor/bin/phpunit --testdox tests/EndToEnd/
+            if [ -f bin/phpunit ]; then php bin/phpunit --testdox tests/EndToEnd/;
+            else vendor/bin/phpunit --testdox tests/EndToEnd/; fi
           fi
