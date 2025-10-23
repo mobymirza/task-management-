@@ -7,6 +7,7 @@ on:
 jobs:
   tests:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
 
@@ -15,17 +16,17 @@ jobs:
         with:
           php-version: '8.2'
           extensions: mbstring, pdo_mysql
+          coverage: none
 
       - name: Install dependencies
         run: composer install --no-interaction --no-progress --prefer-dist
 
       - name: Run Unit tests
         run: |
-          if [ -f bin/phpunit ]; then php bin/phpunit --testdox;
-          else vendor/bin/phpunit --testdox; fi
+          if [ -f bin/phpunit ]; then php bin/phpunit --configuration phpunit.xml.dist --testsuite Unit --testdox;
+          else vendor/bin/phpunit --configuration phpunit.xml.dist --testsuite Unit --testdox; fi
 
-      - name: Run End-to-End tests
+      - name: Run End-To-End tests
         run: |
-          php -S 127.0.0.1:8000 -t public >/dev/null 2>&1 &
-          sleep 5
-          php tests/EndToEnd/run-tests.php
+          if [ -f bin/phpunit ]; then php bin/phpunit --configuration phpunit.xml.dist --testsuite EndToEnd --testdox;
+          else vendor/bin/phpunit --configuration phpunit.xml.dist --testsuite EndToEnd --testdox; fi
