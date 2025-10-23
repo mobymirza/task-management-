@@ -33,4 +33,4 @@ jobs:
         run: |
           php -S 127.0.0.1:8000 -t public >/dev/null 2>&1 &
           sleep 5
-          php tests/e2e/run-tests.php
+          php tests/EndToEnd/run-tests.php
