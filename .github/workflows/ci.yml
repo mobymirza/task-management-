@@ -20,10 +20,10 @@ jobs:
         run: docker compose exec -T php  sh -c "cd /var/www/html && composer install --no-interaction --prefer-dist --optimize-autoloader"
 
       - name: Copy CI environment
-        run: docker compose exec -T php  sh -c "cd /var/www/app && cp .env.ci .env"
+        run: docker compose exec -T php  sh -c "cd /var/www/html && cp .env.ci .env"
 
       - name: Run database migrations
-        run: docker compose exec -T php  sh -c "cd /var/www/app && php bin/console doctrine:migrations:migrate --no-interaction"
+        run: docker compose exec -T php  sh -c "cd /var/www/html && php bin/console doctrine:migrations:migrate --no-interaction"
 
       - name: Run Symfony tests (PHPUnit)
-        run: docker compose exec -T php  sh -c "cd /var/www/app && ./vendor/bin/phpunit"
+        run: docker compose exec -T php  sh -c "cd /var/www/html && ./vendor/bin/phpunit"
