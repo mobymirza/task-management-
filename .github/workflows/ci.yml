@@ -1,5 +1,9 @@
 name: Run All Tests
-on: [push]
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
 
 jobs:
   tests:
@@ -27,10 +31,6 @@ jobs:
 
       - name: Run End-to-End tests
         run: |
-          php artisan serve &
+          php -S 127.0.0.1:8000 -t public >/dev/null 2>&1 &
           sleep 5
           php tests/e2e/run-tests.php
-          on:
-              push:
-              pull_request:
-              workflow_dispatch:
