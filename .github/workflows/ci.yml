@@ -16,14 +16,20 @@ jobs:
       - name: Set up Docker Compose
         run: docker compose up -d php database
 
+      - name: Mark directory as safe for git
+        run: docker compose exec -T php sh -c "git config --global --add safe.directory /var/www/html"
+
       - name: Install Composer dependencies
-        run: docker compose exec -T php  sh -c "cd /var/www/html && composer install --no-interaction --prefer-dist --optimize-autoloader"
+        run: docker compose exec -T php sh -c "cd /var/www/html && composer install --no-interaction --prefer-dist --optimize-autoloader --no-progress"
 
       - name: Copy test environment
-        run: docker compose exec -T php  sh -c "cd /var/www/html && cp .env.test .env"
+        run: docker compose exec -T php sh -c "cd /var/www/html && cp .env.test .env"
+
+      - name: Wait for database
+        run: sleep 5
 
       - name: Run database migrations
-        run: docker compose exec -T php  sh -c "cd /var/www/html && php bin/console doctrine:migrations:migrate --no-interaction"
+        run: docker compose exec -T php sh -c "cd /var/www/html && php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration"
 
       - name: Run Symfony tests (PHPUnit)
-        run: docker compose exec -T php  sh -c "cd /var/www/html && ./vendor/bin/phpunit"
+        run: docker compose exec -T php sh -c "cd /var/www/html && ./vendor/bin/phpunit"
