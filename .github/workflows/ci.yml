@@ -17,7 +17,7 @@ jobs:
         run: docker compose up -d php database
 
       - name: Install Composer dependencies
-        run: docker compose exec -T php  sh -c "cd /var/www/app && composer install --no-interaction --prefer-dist --optimize-autoloader"
+        run: docker compose exec -T php  sh -c "cd /var/www/html && composer install --no-interaction --prefer-dist --optimize-autoloader"
 
       - name: Copy CI environment
         run: docker compose exec -T php  sh -c "cd /var/www/app && cp .env.ci .env"
