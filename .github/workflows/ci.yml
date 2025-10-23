@@ -22,11 +22,11 @@ jobs:
         run: composer install --no-interaction --no-progress --prefer-dist
 
       - name: Run Unit tests
-        run: |
-          if [ -f bin/phpunit ]; then php bin/phpunit --configuration phpunit.xml.dist --testsuite Unit --testdox;
-          else vendor/bin/phpunit --configuration phpunit.xml.dist --testsuite Unit --testdox; fi
+  run: |
+    if [ -f bin/phpunit ]; then php bin/phpunit --testdox tests/Unit;
+    else vendor/bin/phpunit --testdox tests/Unit; fi
 
-      - name: Run End-To-End tests
-        run: |
-          if [ -f bin/phpunit ]; then php bin/phpunit --configuration phpunit.xml.dist --testsuite EndToEnd --testdox;
-          else vendor/bin/phpunit --configuration phpunit.xml.dist --testsuite EndToEnd --testdox; fi
+     - name: Run End-To-End tests
+  run: |
+    if [ -f bin/phpunit ]; then php bin/phpunit --testdox tests/EndToEnd;
+    else vendor/bin/phpunit --testdox tests/EndToEnd; fi
