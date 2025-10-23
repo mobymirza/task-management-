@@ -19,18 +19,18 @@ jobs:
       - name: Install dependencies
         run: composer install --no-interaction --no-progress --prefer-dist
 
-      - name: Run Unit tests
+      - name: Run Unit test
         run: |
           if [ -f bin/phpunit ]; then
-            php bin/phpunit --testdox tests/Unit
+            php bin/phpunit --testdox tests/Unit/
           else
-            vendor/bin/phpunit --testdox tests/Unit
+            vendor/bin/phpunit --testdox tests/Unit/
           fi
 
       - name: Run End-To-End tests
         run: |
           if [ -f bin/phpunit ]; then
-            php bin/phpunit --testdox tests/EndToEnd
+            php bin/phpunit --testdox tests/EndToEnd/
           else
-            vendor/bin/phpunit --testdox tests/EndToEnd
+            vendor/bin/phpunit --testdox tests/EndToEnd/
           fi
