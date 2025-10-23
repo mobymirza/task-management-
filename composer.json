@@ -1,69 +1,39 @@
-{
-    "type": "project",
-    "license": "proprietary",
-    "minimum-stability": "stable",
-    "prefer-stable": true,
-    "require": {
-        "php": ">=8.2",
-        "ext-ctype": "*",
-        "ext-iconv": "*",
-        "symfony/console": "7.3.*",
-        "symfony/dotenv": "7.3.*",
-        "symfony/flex": "^2",
-        "symfony/framework-bundle": "7.3.*",
-        "symfony/runtime": "7.3.*",
-        "symfony/yaml": "7.3.*"
-    },
-    "require-dev": {
-    },
-    "config": {
-        "allow-plugins": {
-            "php-http/discovery": true,
-            "symfony/flex": true,
-            "symfony/runtime": true
-        },
-        "bump-after-update": true,
-        "sort-packages": true
-    },
-    "autoload": {
-        "psr-4": {
-            "App\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "App\\Tests\\": "tests/"
-        }
-    },
-    "replace": {
-        "symfony/polyfill-ctype": "*",
-        "symfony/polyfill-iconv": "*",
-        "symfony/polyfill-php72": "*",
-        "symfony/polyfill-php73": "*",
-        "symfony/polyfill-php74": "*",
-        "symfony/polyfill-php80": "*",
-        "symfony/polyfill-php81": "*",
-        "symfony/polyfill-php82": "*"
-    },
-    "scripts": {
-        "auto-scripts": {
-            "cache:clear": "symfony-cmd",
-            "assets:install %PUBLIC_DIR%": "symfony-cmd"
-        },
-        "post-install-cmd": [
-            "@auto-scripts"
-        ],
-        "post-update-cmd": [
-            "@auto-scripts"
-        ]
-    },
-    "conflict": {
-        "symfony/symfony": "*"
-    },
-    "extra": {
-        "symfony": {
-            "allow-contrib": false,
-            "require": "7.3.*"
-        }
-    }
-}
+name: Run All Tests
+on: [push, pull_request]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, pdo_mysql
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --no-progress --prefer-dist
+
+      - name: Run Unit tests (Symfony)
+        run: |
+          if [ -f bin/phpunit ]; then
+            php bin/phpunit --testdox
+          elif [ -f vendor/bin/phpunit ]; then
+            vendor/bin/phpunit --testdox
+          else
+            echo "PHPUnit not found"; exit 1
+          fi
+
+      - name: Run End-to-End tests
+        run: |
+          php -S 127.0.0.1:8000 -t public >/dev/null 2>&1 &
+          sleep 5
+          if [ -f tests/e2e/run-tests.php ]; then
+            php tests/e2e/run-tests.php
+          else
+            echo "E2E script not found, skipping"
+          fi
