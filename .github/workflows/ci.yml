@@ -30,3 +30,7 @@ jobs:
           php artisan serve &
           sleep 5
           php tests/e2e/run-tests.php
+          on:
+              push:
+              pull_request:
+              workflow_dispatch:
